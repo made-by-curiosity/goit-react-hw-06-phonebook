@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { ContactList } from 'components/ContactList/ContactList';
 import { AddForm } from 'components/Form/Form';
@@ -6,12 +7,15 @@ import { Container } from './Container/Container';
 import { Section } from './Section/Section';
 import { Filter } from './Filter/Filter';
 import storage from 'utils/localStorageAPI';
+import { addContact, deleteContact } from 'redux/contacts/slice.js';
+import { updateFilter } from 'redux/filter/slice';
 
 const STORAGE_KEY = 'phonebook_contacts';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(storage.load(STORAGE_KEY) || []);
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filter);
 
   useEffect(() => {
     storage.save(STORAGE_KEY, contacts);
@@ -26,18 +30,16 @@ export const App = () => {
       return;
     }
 
-    setContacts(contacts => {
-      const newContact = {
-        id: nanoid(),
-        ...values,
-      };
+    const newContact = {
+      id: nanoid(),
+      ...values,
+    };
 
-      return [newContact, ...contacts];
-    });
+    dispatch(addContact(newContact));
   };
 
   const handleFilter = e => {
-    setFilter(e.target.value);
+    dispatch(updateFilter(e.target.value));
   };
 
   const filterContacts = () => {
@@ -49,9 +51,7 @@ export const App = () => {
   };
 
   const handleDelete = contactId => {
-    setContacts(contacts =>
-      contacts.filter(contact => contact.id !== contactId)
-    );
+    dispatch(deleteContact(contactId));
   };
 
   const filteredContacts = filterContacts();
