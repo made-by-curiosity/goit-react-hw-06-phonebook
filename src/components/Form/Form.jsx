@@ -1,9 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { AddButton, PhonebookForm, ErrorText } from './Form.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { nanoid } from 'nanoid';
+import { addContact } from 'redux/contacts/slice';
 
-export const AddForm = ({ onSubmit }) => {
+export const Form = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+
   const {
     register,
     handleSubmit,
@@ -16,6 +21,23 @@ export const AddForm = ({ onSubmit }) => {
     },
     mode: 'onChange',
   });
+
+  const onSubmit = values => {
+    const hasContact = contacts.find(contact => values.name === contact.name);
+
+    if (hasContact) {
+      alert(`${values.name} is already in contacts`);
+
+      return;
+    }
+
+    const newContact = {
+      id: nanoid(),
+      ...values,
+    };
+
+    dispatch(addContact(newContact));
+  };
 
   return (
     <PhonebookForm
@@ -62,8 +84,4 @@ export const AddForm = ({ onSubmit }) => {
       </AddButton>
     </PhonebookForm>
   );
-};
-
-AddForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
