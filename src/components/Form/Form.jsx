@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { AddButton, PhonebookForm, ErrorText } from './Form.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { addContact } from 'redux/contacts/slice';
+import { addContact, getContacts } from 'redux/contacts/slice';
 
 export const Form = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(getContacts);
 
   const {
     register,

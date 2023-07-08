@@ -1,19 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ContactItem, DeleteBtn } from './ContactList.styled';
-import { deleteContact } from 'redux/contacts/slice';
-import storage from 'utils/localStorageAPI';
+import { deleteContact, getContacts } from 'redux/contacts/slice';
 import { useDispatch, useSelector } from 'react-redux';
-
-const STORAGE_KEY = 'phonebook_contacts';
+import { getFilter } from 'redux/filter/slice';
 
 export const ContactList = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filter);
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
-  useEffect(() => {
-    storage.save(STORAGE_KEY, contacts);
-  }, [contacts]);
+  const handleDelete = contactId => {
+    dispatch(deleteContact(contactId));
+  };
 
   const filterContacts = () => {
     const normalizedFilter = filter.toLowerCase();
@@ -21,10 +19,6 @@ export const ContactList = () => {
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
-  };
-
-  const handleDelete = contactId => {
-    dispatch(deleteContact(contactId));
   };
 
   const filteredContacts = filterContacts();

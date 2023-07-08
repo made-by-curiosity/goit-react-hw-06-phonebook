@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ContactsFilter, FilterInput } from './Filter.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateFilter } from 'redux/filter/slice';
+import { getFilter, updateFilter } from 'redux/filter/slice';
 
 export const Filter = ({ filterTitle }) => {
   const dispatch = useDispatch();
-  const filter = useSelector(state => state.filter);
+  const filter = useSelector(getFilter);
 
   const handleFilter = e => {
     dispatch(updateFilter(e.target.value));
